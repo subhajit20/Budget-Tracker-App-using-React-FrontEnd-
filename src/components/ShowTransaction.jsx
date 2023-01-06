@@ -9,6 +9,7 @@ function ShowTransaction() {
     const [transaction,setTransaction] = useState()
     const [sum,setSum] = useState()
     const [cost,setCost] = useState();
+    const [expensecat,setExpensecat] = useState([]);
     const {key} = useContext(Auth)
 
     function onchangeData(e){
@@ -33,11 +34,27 @@ function ShowTransaction() {
         setResponse(data.msg)
         let sum1 = 0;
         for(let i = 0;i <= response.length-1; i++){
-            console.log(response[i].cost)
             sum1 = sum1 + parseInt(response[i].cost)
         }
         setSum(sum1)
     }
+
+    async function getallcategory(){
+      const res = await fetch("http://127.0.0.1:8000/tracker/getdistintransaction/",{
+          method:"POST",
+          headers:{
+              "content-type":"application/json",
+              "Authorization":"token "+key
+          },
+      })
+      const data = await res.json();
+      if(data.status){
+        setExpensecat([...data.msg])
+      }else{
+        setExpensecat([])
+      }
+
+  }
 
     async function ondelete(id){
         const res = await fetch("http://127.0.0.1:8000/tracker/delete/",{
@@ -119,8 +136,9 @@ function ShowTransaction() {
     }
 
     useEffect(()=>{
-        getalltransaction()
-    })
+        getalltransaction();
+        getallcategory()
+    },[])
   return (
     <div className="container">
 <div className="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -159,9 +177,9 @@ function ShowTransaction() {
 <select class="form-select" aria-label="Default select example">
   <option selected>Select Category</option>
   {
-    response.length > 0 ? response.map((x)=>{
+    expensecat.length > 0 ? expensecat.map((x,i)=>{
         return <>
-        <option value={x.category}>{x.category}</option></>
+        <option key={i} value={x.category}>{x.category}</option></>
     }) : ""
   }
 </select>
