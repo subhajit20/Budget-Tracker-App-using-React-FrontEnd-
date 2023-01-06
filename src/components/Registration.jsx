@@ -11,7 +11,6 @@ function Registration() {
   
   function onchangeData(e){
     if(e.target.name === "email"){
-      console.log(e.target.name)
       setEmail(e.target.value)
     }else if(e.target.name === "firstname"){
       setFirstname(e.target.value)
@@ -26,8 +25,11 @@ function Registration() {
 
   async function submit(e){
     e.preventDefault()
-    const res = await fetch("http://127.0.0.1:8000/user/u1/",{
+    const res = await fetch("http://127.0.0.1:8000/user/r1/",{
       method:"POST",
+      headers:{
+        "content-type":"application/json"
+      },
       body:JSON.stringify({
         email:email,
         firstname:firstname,
@@ -39,6 +41,7 @@ function Registration() {
     setLoading(true)
 
     const data = await res.json();
+    console.log(data)
     if(!data.status){
       setLoading(false)
       setError({flag:false,msg:"Invalid Email and Password"})
