@@ -26,6 +26,9 @@ function HomeNavbar() {
           <Link className="nav-link" to="/showtransaction">Show Trancsation</Link>
         </li>
         <li className="nav-item">
+          <Link className="nav-link" to="/showcharts">Show Charts</Link>
+        </li>
+        <li className="nav-item">
           <a className="nav-link" href="#" onClick={logout}>Logout</a>
         </li>
       </ul>

@@ -2,6 +2,7 @@ import React,{useState,useContext, useEffect} from 'react';
 import { Auth } from '../context/AuthContext';
 
 function ShowTransaction() {
+    const [select,setSelect] = useState()
     const [response,setResponse] = useState([])
     const [category,setCategory] = useState()
     const [expensename,setExpensename] = useState()
@@ -12,6 +13,32 @@ function ShowTransaction() {
     const [expensecat,setExpensecat] = useState([]);
     const {key} = useContext(Auth)
 
+    let sum1 = 0;
+    async function getTransactionByCategory(cat){
+      const res = await fetch("http://127.0.0.1:8000/tracker/serachbycat/",{
+        method:"POST",
+        headers:{
+              "content-type":"application/json",
+              "Authorization":"token "+key
+        },
+        body:JSON.stringify({
+            category:cat
+        })
+      });
+      const data = await res.json();
+
+      if(data.status){
+        setResponse(data.msg);
+        let sum1 = 0;
+        for(let i = 0;i <= response.length-1; i++){
+            sum1 = sum1 + parseInt(response[i].cost)
+        }
+        setSum(sum1)
+      }else{
+        setResponse([])
+      }
+    }
+
     function onchangeData(e){
         if(e.target.name === "category"){
           setCategory(e.target.value)
@@ -19,6 +46,9 @@ function ShowTransaction() {
           setExpensename(e.target.value)
         }else if(e.target.name === "cost"){
           setCost(e.target.value)
+        }else if(e.target.name === "allcategory"){
+          setSelect(e.target.value)
+          getTransactionByCategory(select)
         }
       }
 
@@ -87,7 +117,7 @@ function ShowTransaction() {
         const expense1 = document.querySelector(".expense");
         const cost1 = document.querySelector(".cost");
 
-        console.log(data.msg[0])
+
         category1.value = data.msg[0].category;
         expense1.value = data.msg[0].expensename;
         cost1.value = data.msg[0].cost;
@@ -135,6 +165,7 @@ function ShowTransaction() {
         }
     }
 
+    
     useEffect(()=>{
         getalltransaction();
         getallcategory()
@@ -174,12 +205,11 @@ function ShowTransaction() {
   </div>
 </div>
 <div className="container p-5">
-<select class="form-select" aria-label="Default select example">
-  <option selected>Select Category</option>
+  <p>Select Category</p>
+<select className="form-select" name="allcategory" onChange={onchangeData} aria-label="Default select example">
   {
     expensecat.length > 0 ? expensecat.map((x,i)=>{
-        return <>
-        <option key={i} value={x.category}>{x.category}</option></>
+        return <option key={i} value={x.category}>{x.category}</option>
     }) : ""
   }
 </select>
@@ -213,7 +243,7 @@ function ShowTransaction() {
                 
             </tbody>
             </table>
-            <h3>Total Expenditure - {sum}</h3>
+            <h3>Total Expenditure - {sum ? sum : ""}</h3>
     </div>
   )
 }

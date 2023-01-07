@@ -6,6 +6,7 @@ import Home from './components/Home';
 import Profile from './components/Profile';
 import CreateTransaction from './components/CreateTransaction';
 import ShowTransaction from './components/ShowTransaction';
+import ShowCharts from './components/ShowCharts';
 
 function App() {
   console.log("Helloe")
@@ -19,6 +20,7 @@ function App() {
         <Route path='/profile' element={<Profile/>}/>
         <Route path='/createtransaction' element={<CreateTransaction/>}/>
         <Route path='/showtransaction' element={<ShowTransaction/>}/>
+        <Route path='/showcharts' element={<ShowCharts/>}/>
       </Route>
     </Routes>
   )
